@@ -1,28 +1,27 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
+using System;
 
-
-public enum CardType
+public class Player : NetworkBehaviour
 {
-    Text,
-    Image,
-    Wild
-}
+    [SyncVar(hook = nameof(onReady))] public bool ready;
 
-[SerializeField]
-public class Card
-{
-    public CardType type;
-    public string text;
-    public Sprite image;
-}
+    private void onReady(bool old, bool updated)
+    {
+        if (updated == true) GameManager.instance.AddPlayerName();
+    }
 
+    private void Start()
+    {
+        CommandSetReady();
+    }
 
-public class Player : MonoBehaviour
-{
-    public Card textCard, textCard2, imageCard, imageCard2, WildCard;
-    public List<Card> promptCards = new List<Card>();
-    public Card selectedCard;
-    public GameObject CardPrefab;
+    [Command]
+    public void CommandSetReady()
+    {
+        ready = true;
+    }
 }
